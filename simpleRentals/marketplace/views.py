@@ -71,6 +71,7 @@ class UserEditView(generics.UpdateAPIView):
     permission_classes = [IsAuthenticated]
 
     def get_object(self):
+        print("FILES RECEIVED:", list(self.request.FILES.keys()))  # TEMP
         return self.request.user
     
 class UserDeleteView(generics.DestroyAPIView):
