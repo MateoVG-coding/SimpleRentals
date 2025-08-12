@@ -44,43 +44,25 @@ class PasswordResetConfirmSerializer(serializers.Serializer):
 
 class UserSerializer(serializers.ModelSerializer):
     sex = serializers.CharField(source='get_sex_display')
-    profile_picture_url = serializers.SerializerMethodField() 
 
     class Meta:
         model = MarketplaceUser
         fields = [
             'id', 'email', 'first_name', 'last_name', 'age', 'sex',
-            'city', 'preferred_location', 'budget_min', 'budget_max', "yearly_income", 'profile_picture_url', 'phone_number',
+            'city', 'preferred_location', 'budget_min', 'budget_max', "yearly_income", 'profile_picture', 'phone_number',
             'facebook_link', 'instagram_link', 'receive_email_notifications', 'receive_sms_notifications','terms_accepted',
             'roommate_profile'
         ]
 
-    def get_profile_picture_url(self, obj):
-        if obj.profile_picture:
-            try:
-                return obj.profile_picture.url  
-            except ValueError:
-                return None
-        return None
-
 class UserBasicSerializer(serializers.ModelSerializer):
     full_name = serializers.SerializerMethodField()
-    profile_picture_url = serializers.SerializerMethodField()
 
     class Meta:
         model = MarketplaceUser
-        fields = ['id', 'full_name', 'email', 'profile_picture_url']
+        fields = ['id', 'full_name', 'email', 'profile_picture']
 
     def get_full_name(self, obj):
         return f"{obj.first_name} {obj.last_name}".strip()
-    
-    def get_profile_picture_url(self, obj):
-        if obj.profile_picture:
-            try:
-                return obj.profile_picture.url
-            except ValueError:
-                return None
-        return None
     
 
 class UserRegistrationSerializer(serializers.ModelSerializer):
@@ -282,22 +264,12 @@ class RoommateUserRegistrationSerializer(serializers.ModelSerializer):
 # Listing management serializers
 
 class ListingPictureSerializer(serializers.ModelSerializer):
-    image_url = serializers.SerializerMethodField() 
-
     class Meta:
         model = ListingPicture
-        fields = ['id', 'image', 'location', 'is_primary', 'image_url']
+        fields = ['id', 'image', 'location', 'is_primary']
         extra_kwargs = {
             'image': {'required': True},
         }
-
-    def get_image_url(self, obj):
-        if obj.image:
-            try:
-                return obj.image.url
-            except ValueError:
-                return None
-        return None
 
 class ListingSerializer(serializers.ModelSerializer):
     owner = UserSerializer(read_only=True)  # Include owner details
