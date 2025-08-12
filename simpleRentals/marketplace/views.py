@@ -12,7 +12,7 @@ from django.utils.timezone import now
 from django.db.models import Q
 from django.core.exceptions import PermissionDenied
 from rest_framework_simplejwt.tokens import RefreshToken
-from rest_framework.exceptions import ValidationError
+from rest_framework.exceptions import ValidationError, NotFound
 from rest_framework.views import APIView
 from math import radians, cos, sin, asin, sqrt
 from rest_framework.views import APIView
