@@ -320,7 +320,9 @@ function FormEdit({ profile }) {
         data.append("delete_profile_picture", "true");
       }
       const endpoint = "/edit-profile/";
-      const response = await api.patch(endpoint, data); 
+      const response = await api.patch(endpoint, data, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
       if (response.status === 200 || response.status === 201) {
         navigate(`/profile/${response.data.id}`);
       }
