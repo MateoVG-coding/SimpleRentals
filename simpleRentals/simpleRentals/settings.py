@@ -108,6 +108,8 @@ WSGI_APPLICATION = "simpleRentals.wsgi.application"
 
 DB_LIVE = os.getenv("DB_LIVE")
 
+DEBUG = DB_LIVE in ["False", False]  
+
 if DB_LIVE in ["False", False]: # Local Development Settings
 
     # Define where media files (uploads) are stored
@@ -152,8 +154,6 @@ else: # Production Settings
             "PORT": os.getenv("DB_PORT", "5432"),
         }
     }
-
-DEBUG = DB_LIVE in ["False", False]  
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
