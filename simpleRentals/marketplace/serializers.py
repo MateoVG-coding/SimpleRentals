@@ -44,7 +44,6 @@ class PasswordResetConfirmSerializer(serializers.Serializer):
 
 class UserSerializer(serializers.ModelSerializer):
     sex = serializers.CharField(source='get_sex_display')
-    profile_picture = serializers.SerializerMethodField() 
 
     class Meta:
         model = MarketplaceUser
@@ -55,15 +54,8 @@ class UserSerializer(serializers.ModelSerializer):
             'roommate_profile'
         ]
 
-    def get_profile_picture(self, obj):
-        try:
-            return obj.profile_picture.url if obj.profile_picture else None
-        except Exception:
-            return None
-
 class UserBasicSerializer(serializers.ModelSerializer):
     full_name = serializers.SerializerMethodField()
-    profile_picture = serializers.SerializerMethodField()
 
     class Meta:
         model = MarketplaceUser
@@ -71,12 +63,6 @@ class UserBasicSerializer(serializers.ModelSerializer):
 
     def get_full_name(self, obj):
         return f"{obj.first_name} {obj.last_name}".strip()
-    
-    def get_profile_picture(self, obj):
-        try:
-            return obj.profile_picture.url if obj.profile_picture else None
-        except Exception:
-            return None
     
 
 class UserRegistrationSerializer(serializers.ModelSerializer):
@@ -275,21 +261,12 @@ class RoommateUserRegistrationSerializer(serializers.ModelSerializer):
 # Listing management serializers
 
 class ListingPictureSerializer(serializers.ModelSerializer):
-    image = serializers.SerializerMethodField()
-
     class Meta:
         model = ListingPicture
         fields = ['id', 'image', 'location', 'is_primary']
         extra_kwargs = {
             'image': {'required': True},
         }
-
-    
-    def get_image(self, obj):
-        try:
-            return obj.image.url if obj.image else None
-        except Exception:
-            return None
 
 class ListingSerializer(serializers.ModelSerializer):
     owner = UserSerializer(read_only=True)  # Include owner details
