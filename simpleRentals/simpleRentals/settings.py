@@ -104,6 +104,8 @@ WSGI_APPLICATION = "simpleRentals.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
+MEDIA_URL = 'media/'
+
 DB_LIVE = os.getenv("DB_LIVE")
 
 DEBUG = DB_LIVE in ["False", False]  
@@ -111,7 +113,6 @@ DEBUG = DB_LIVE in ["False", False]
 if DB_LIVE in ["False", False]: # Local Development Settings
 
     # Define where media files (uploads) are stored
-    MEDIA_URL = 'media/'
     MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
     # URL for frontend in verification links
