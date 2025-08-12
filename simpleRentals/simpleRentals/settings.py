@@ -111,7 +111,7 @@ DEBUG = DB_LIVE in ["False", False]
 if DB_LIVE in ["False", False]: # Local Development Settings
 
     # Define where media files (uploads) are stored
-    MEDIA_URL = '/media/'
+    MEDIA_URL = 'media/'
     MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
     # URL for frontend in verification links
