@@ -65,9 +65,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "rest_framework",
     'rest_framework_simplejwt.token_blacklist', 
-    "corsheaders",
-    "cloudinary",
-    "cloudinary_storage"
+    "corsheaders"
 ]
 
 AUTH_USER_MODEL = "marketplace.MarketplaceUser"
@@ -133,7 +131,9 @@ if DB_LIVE in ["False", False]: # Local Development Settings
 else: # Production Settings
 
     # Cloudinary settings
+    INSTALLED_APPS += ["cloudinary", "cloudinary_storage"]
     DEFAULT_FILE_STORAGE = "cloudinary_storage.storage.MediaCloudinaryStorage"
+
     CLOUDINARY_STORAGE = {
         "CLOUD_NAME": os.getenv("CLOUDINARY_CLOUD_NAME"),
         "API_KEY": os.getenv("CLOUDINARY_API_KEY"),

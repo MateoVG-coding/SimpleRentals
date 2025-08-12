@@ -81,16 +81,13 @@ class UserDeleteView(generics.DestroyAPIView):
         return self.request.user
     
     def perform_destroy(self, instance):
-        if instance.profile_picture and hasattr(instance.profile_picture, 'path'):
-            if os.path.isfile(instance.profile_picture.path):
-                os.remove(instance.profile_picture.path)
-        # Delete all listing images
+        if instance.profile_picture:
+            instance.profile_picture.delete(save=False)  
         for listing in instance.listings.all():
-            for picture in listing.pictures.all():
-                if picture.image and hasattr(picture.image, 'path'):
-                    if os.path.isfile(picture.image.path):
-                        os.remove(picture.image.path)
-        
+            for picture in list(listing.pictures.all()):
+                if picture.image:
+                    picture.image.delete(save=False)
+                picture.delete()
         instance.delete()
     
 class UserProfileView(generics.RetrieveAPIView):
@@ -218,10 +215,10 @@ class ListingDeleteView(generics.DestroyAPIView):
         return Listing.objects.filter(owner=user)
 
     def perform_destroy(self, instance):
-        for picture in instance.pictures.all():
+        for picture in list(instance.pictures.all()):
             if picture.image:
-                if os.path.isfile(picture.image.path):
-                    os.remove(picture.image.path)
+                picture.image.delete(save=False)
+            picture.delete()
         instance.delete()
 
 class ListingEditView(generics.UpdateAPIView):

@@ -215,11 +215,8 @@ class UserEditSerializer(serializers.ModelSerializer):
         new_picture = validated_data.get('profile_picture', None)
 
         if delete_picture or new_picture:
-            # Delete the old profile picture file if it exists
-            if instance.profile_picture and hasattr(instance.profile_picture, 'path'):
-                import os
-                if os.path.isfile(instance.profile_picture.path):
-                    os.remove(instance.profile_picture.path)
+            if instance.profile_picture:
+                instance.profile_picture.delete(save=False) 
                 instance.profile_picture = None
 
         password = validated_data.pop('password', None)
@@ -351,10 +348,10 @@ class ListingPostingSerializer(serializers.ModelSerializer):
         delete_ids = validated_data.pop('delete_images', [])
         if delete_ids:
             images_to_delete = ListingPicture.objects.filter(id__in=delete_ids, listing=instance)
-            for image in images_to_delete:
-                if image.image and os.path.isfile(image.image.path):
-                    os.remove(image.image.path)
-                image.delete()
+            for pic in images_to_delete:
+                if pic.image:
+                    pic.image.delete(save=False)  
+                pic.delete()
 
         # Add new pictures
         new_pictures = validated_data.pop('pictures', [])
