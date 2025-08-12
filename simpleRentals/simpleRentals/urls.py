@@ -1,9 +1,31 @@
 from django.contrib import admin
-from django.urls import path, include
+from django.urls import path, include, re_path
 from marketplace import views
 from django.conf.urls.static import static
 from django.conf import settings
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView, TokenBlacklistView
+from django.http import HttpResponseRedirect, Http404
+
+def media_redirect(request, subpath):
+    """
+    Redirect legacy/media-style paths to Cloudinary.
+    Example incoming path: /profile_pictures/i.pravatar.jpg
+    Redirects to: https://res.cloudinary.com/<cloud>/image/upload/<that path>
+    """
+    cloud = getattr(settings, "CLOUDINARY_STORAGE", {}).get("CLOUD_NAME")
+    if not cloud:
+        raise Http404("Cloudinary is not configured")
+
+    # Decide which folder the user hit
+    if request.path.startswith("/profile_pictures/"):
+        name = f"profile_pictures/{subpath}"
+    elif request.path.startswith("/listing_pictures/"):
+        name = f"listing_pictures/{subpath}"
+    else:
+        raise Http404("Unknown media path")
+
+    url = f"https://res.cloudinary.com/{cloud}/image/upload/d_default_profile/{name}"
+    return HttpResponseRedirect(url)
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -68,6 +90,13 @@ urlpatterns = [
     path("password-reset/confirm/", views.PasswordResetConfirmView.as_view(), name="password_reset_confirm")
 ]
 
+# Static & media in dev only
 if settings.DEBUG:
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    urlpatterns += static(getattr(settings, "MEDIA_URL", "/media/"), document_root=getattr(settings, "MEDIA_ROOT", None))
+else:
+    # Redirect legacy media paths to Cloudinary
+    urlpatterns += [
+        re_path(r"^profile_pictures/(?P<subpath>.+)$", media_redirect),
+        re_path(r"^listing_pictures/(?P<subpath>.+)$", media_redirect),
+    ]
