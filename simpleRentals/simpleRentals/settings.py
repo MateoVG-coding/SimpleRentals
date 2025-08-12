@@ -141,6 +141,15 @@ else: # Production Settings
         "API_SECRET": os.getenv("CLOUDINARY_API_SECRET"),
     }
 
+    STORAGES = {
+        "default": {
+            "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage",
+        },
+        "staticfiles": {
+            "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+        },
+    }
+
     # URL for deployed frontend in verification links
     FRONTEND_URL = "https://transcendent-concha-495d54.netlify.app"
 
