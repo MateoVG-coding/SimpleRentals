@@ -64,20 +64,24 @@ describe("Review Form E2E", () => {
 
   it("edits an existing review and posts it successfully", () => {
     cy.intercept("PATCH", "**/reviews/manage/**").as("editReview");
+    cy.intercept("GET", "**/profile/reviews*").as("getReviews");
 
     cy.visit("/reviews/edit/123");
 
     cy.get("select[id='revieweeRole']").select("R");
     cy.get("textarea[id='comment']").clear().type("Updated Comment babyyy!!");
 
-    cy.get("button[type='submit']")
-      .contains(/save changes/i)
-      .click();
+    cy.get("button[type='submit']").contains(/save changes/i).click();
 
     cy.wait("@editReview").its("response.statusCode").should("eq", 200);
 
     cy.url().should("include", "/profile/98");
-    cy.contains("Updated Comment babyyy!!");
+
+    cy.contains("button", /reviews/i).click();
+
+    cy.wait("@getReviews");
+
+    cy.contains("Updated Comment babyyy!!", { timeout: 10000 }).should("be.visible");
     cy.contains("Roommate");
   });
 });
