@@ -54,6 +54,14 @@ class UserSerializer(serializers.ModelSerializer):
             'roommate_profile'
         ]
 
+    def get_profile_picture_url(self, obj):
+        if obj.profile_picture:
+            try:
+                return obj.profile_picture.url  
+            except ValueError:
+                return None
+        return None
+
 class UserBasicSerializer(serializers.ModelSerializer):
     full_name = serializers.SerializerMethodField()
 
@@ -63,6 +71,14 @@ class UserBasicSerializer(serializers.ModelSerializer):
 
     def get_full_name(self, obj):
         return f"{obj.first_name} {obj.last_name}".strip()
+    
+    def get_profile_picture_url(self, obj):
+        if obj.profile_picture:
+            try:
+                return obj.profile_picture.url
+            except ValueError:
+                return None
+        return None
     
 
 class UserRegistrationSerializer(serializers.ModelSerializer):
@@ -270,6 +286,14 @@ class ListingPictureSerializer(serializers.ModelSerializer):
         extra_kwargs = {
             'image': {'required': True},
         }
+
+    def get_image_url(self, obj):
+        if obj.image:
+            try:
+                return obj.image.url
+            except ValueError:
+                return None
+        return None
 
 class ListingSerializer(serializers.ModelSerializer):
     owner = UserSerializer(read_only=True)  # Include owner details
